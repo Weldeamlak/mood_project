@@ -1,0 +1,198 @@
+/* General Page Styles */
+body {
+   font-family: Arial, sans-serif;
+   margin: 0;
+   padding: 0;
+   display: flex;
+   flex-direction: column;
+   height: 100vh;
+}
+
+/* Header */
+header {
+   width: 100%;
+   background-color: #007BFF;
+   color: white;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 15px 20px;
+}
+
+#profile-section {
+   position: relative;
+}
+
+#profile-icon {
+   font-size: 24px;
+   cursor: pointer;
+}
+
+#profile-dropdown {
+   display: none;
+   position: absolute;
+   top: 30px;
+   right: 0;
+   background: white;
+   border: 1px solid #ddd;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+   padding: 10px;
+   border-radius: 5px;
+}
+
+#profile-dropdown button {
+   background: none;
+   border: none;
+   cursor: pointer;
+   font-size: 16px;
+   color: red;
+}
+
+/* Main Layout */
+.container {
+   display: flex;
+   flex-grow: 1;
+   height: calc(100vh - 60px);
+}
+
+/* History Sidebar */
+#history-sidebar {
+   width: 25%;
+   background-color: #f8f9fa;
+   padding: 15px;
+   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+   overflow-y: auto;
+}
+
+#history-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   cursor: pointer;
+}
+
+#history-toggle {
+   font-size: 18px;
+   cursor: pointer;
+}
+
+.hidden {
+   display: none;
+}
+
+#history-list {
+   padding: 0;
+   list-style-type: none;
+}
+
+#history-list li {
+   padding: 10px;
+   border-bottom: 1px solid #ccc;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+#history-list li:nth-child(even) {
+   background-color: #e9ecef;
+}
+
+.delete-btn {
+   background: none;
+   border: none;
+   color: red;
+   font-size: 16px;
+   cursor: pointer;
+}
+
+/* Mood Tracker Section */
+.mood-section {
+   flex-grow: 1;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   padding: 20px;
+}
+
+.mood-options {
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   gap: 20px;
+   justify-items: center;
+   margin-bottom: 20px;
+}
+
+.mood-circle {
+   width: 100px;
+   height: 100px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border-radius: 50%;
+   font-size: 18px;
+   cursor: pointer;
+   transition: transform 0.2s, box-shadow 0.2s;
+   background-color: #f0f0f0;
+   border: 2px solid #ccc;
+   text-align: center;
+}
+
+.mood-circle:hover {
+   transform: scale(1.1);
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.mood-circle:active {
+   background-color: #007BFF;
+   color: white;
+}
+
+/* Comment Box */
+#comment-box {
+   width: 80%;
+   height: 100px;
+   border: 1px solid #ccc;
+   border-radius: 5px;
+   padding: 10px;
+   margin-top: 20px;
+   font-size: 16px;
+}
+
+/* Modal Styles */
+#modal-overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: rgba(0, 0, 0, 0.5);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+#modal-box {
+   background: white;
+   padding: 20px;
+   border-radius: 5px;
+   text-align: center;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#modal-box button {
+   margin: 10px;
+   padding: 10px 20px;
+   border: none;
+   cursor: pointer;
+}
+
+#modal-confirm {
+   background-color: red;
+   color: white;
+}
+
+#modal-cancel {
+   background-color: gray;
+   color: white;
+}

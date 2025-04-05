@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Mood Tracker</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+   <link rel="stylesheet" href="css.css">
+</head>
+<body>
+   <header>
+    <h1>MOOD TRACKER</h1>
+    <h2 id="user-name"> 
+           
+    </h2>
+   
+    <div id="profile-section">
+        
+      <i id="profile-icon" class="fas fa-user-circle"></i>
+      <div id="profile-dropdown" class="hidden">
+          <button id="logout-btn" >Logout</button>
+      </div>
+  </div>
+  
+   </header>   
+   <div class="container">
+   
+    <aside id="sidebar" class="sidebar">
+        <div class="history">
+            <h2>History</h2>
+            <i id="history-toggle" class="fas fa-chevron-right"></i>
+        </div>
+        <div id="history-container" class="hidden">
+            <ol id="history-list"></ol>
+        </div>
+    </aside>
+    
+    <section class="main">
+      <h2>Today's Mood</h2>
+      <div class="mood-options">
+         <div class="mood-circle" data-mood="Happy">😊<span>Happy</span></div>
+         <div class="mood-circle" data-mood="Sad">😢<span>Sad</span></div>
+         <div class="mood-circle" data-mood="Angry">😡 <span>Angry</span></div>
+         <div class="mood-circle" data-mood="Excited">🤩 <span>Excited</span></div>
+         <div class="mood-circle" data-mood="Other">🫨 <span>Other</span></div> 
+     </div>
+     <textarea id="comment-box" class="hidden" placeholder="Write your thoughts..." rows="4" cols="30" style="display: none;"></textarea>
+    <button id="save-mood" class="hidden" style="display: none;">Save Mood</button>
+    </section>
+   </div>
+
+   <script>
+
+   document.addEventListener("DOMContentLoaded", function () {
+    const moodCircles = document.querySelectorAll(".mood-circle");
+    const commentBox = document.getElementById("comment-box");
+    const saveButton = document.getElementById("save-mood");
+    const profileIcon = document.getElementById("profile-icon");
+    const logoutButton = document.getElementById("logout-btn");
+    const historyToggle = document.getElementById("history-toggle");
+    const historyContainer = document.getElementById("history-container");
+    const profileDropdown = document.getElementById("profile-dropdown");
+   
+    const userName = document.getElementById("user-name");
+    const sidebar = document.querySelector(".sidebar");
+   
+    const historyItems = document.querySelectorAll('.history-item');
+    
+    const mainContent = document.querySelector('.main');
+
+    const userNameElement = document.getElementById("user-name");
+
+    // Get logged-in user
+    const loggedInUser = localStorage.getItem("loggedInUser");
+
+
+    let moodHistory = JSON.parse(localStorage.getItem('moodHistory')) || [];
+
+   
+    
+    if (loggedInUser) {
+        // Update the welcome message with the actual username
+        userNameElement.innerText = `Welcome, ${loggedInUser}!`;
+    } else {
+        userNameElement.innerText = "Welcome, Guest"; // Fallback if no user is logged in
+    }
+
+
+    let text = userName.innerText.trim(); // Get text from HTML
+      let indexs = 0;
+      let isRemoving = false;
+
+      function writeSpell() {
+         if (!isRemoving) {
+            userName.innerText = text.slice(0, indexs);
+            indexs++;
+            if (indexs > text.length) {
+               isRemoving = true;
+               setTimeout(writeSpell, 1000); // Pause before deleting
+               return;
+            }
+         } else {
+            userName.innerText = text.slice(0, indexs);
+            indexs--;
+            if (indexs < 0) {
+               isRemoving = false;
+            }
+         }
+         setTimeout(writeSpell, 200); // Typing effect speed
+      }
+
+      writeSpell(); 
+    
+
+
+    // Handle mood selection
+    moodCircles.forEach(circle => {
+        circle.addEventListener("click", function () {
+            // Remove "active" class from all mood circles
+            moodCircles.forEach(el => el.classList.remove("active"));
+
+            // Add "active" class to the clicked one
+            this.classList.add("active");
+
+            // Show textarea and button
+            commentBox.style.display = "block";
+            saveButton.style.display = "block";
+            commentBox.classList.add("active");  
+        });
+    });
+
+    historyToggle.addEventListener("click", function () {
+        // Toggle the hidden class on the history container
+        historyContainer.classList.toggle("hidden");
+
+        // Change the icon between 'fa-chevron-right' and 'fa-chevron-down'
+        if (historyContainer.classList.contains("hidden")) {
+            historyToggle.classList.remove("fa-chevron-right");
+            historyToggle.classList.add("fa-chevron-right");
+        } else {
+            historyToggle.classList.remove("fa-chevron-down");
+            historyToggle.classList.add("fa-chevron-down");
+        }
+    });
+
+    // Handle save mood button click
+    saveButton.addEventListener("click", function () {
+        // Get the selected mood from the clicked circle
+        const activeCircle = document.querySelector(".mood-circle.active");
+        const mood = activeCircle.getAttribute("data-mood");
+        const emoji = activeCircle.innerText.trim();  // Get the emoji from innerText
+
+        // Get the comment from the comment box
+        const comment = commentBox.value.trim();
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString();
+        // Add the mood, emoji, and comment to the mood history
+        moodHistory.push({
+            number: moodHistory.length + 1,  // Incremented number
+            mood: `${emoji} `,
+            comment: comment ,
+            date: formattedDate
+        });
+
+        // Save the mood history in localStorage
+        localStorage.setItem('moodHistory', JSON.stringify(moodHistory));
+        alert("Saved successfully!");
+        // Clear the comment box and hide it
+        commentBox.value = "";
+        commentBox.style.display = "none";
+        saveButton.style.display = "none";
+        commentBox.classList.remove("active");
+
+        // Optionally, update the history section or log it to console
+        displayMoodHistory();
+    });
+
+    // Handle profile icon click (toggle logout button)
+    profileIcon.addEventListener("click", function () {
+        
+        profileDropdown.classList.toggle("hidden");
+        
+        
+        if (!profileDropdown.classList.contains("hidden")) {
+            logoutButton.style.display = "block";
+        } else {
+            logoutButton.style.display = "none"; 
+        }
+    });
+    logoutButton.addEventListener("click", function () {
+    // Show a confirmation dialog
+    const isConfirmed = confirm("Are you sure you want to log out? All your history will be cleared.");
+
+    // If the user confirms, proceed with logout
+    if (isConfirmed) {
+        // Remove the logged-in user from localStorage
+        localStorage.removeItem("loggedInUser");
+
+        // Clear mood history from localStorage
+        localStorage.removeItem("moodHistory");
+
+        // Redirect to signup page
+        window.location.href = 'index.html';  // Redirect to signup page or any other page
+    }
+});
+
+    // Handle history toggle
+    historyToggle.addEventListener("click", function () {
+        // Toggle between right and down arrow icons
+        this.classList.toggle("fa-chevron-right");
+        this.classList.toggle("fa-chevron-down");
+    });
+
+    // Function to display the mood history in the desired format
+    function displayMoodHistory() {
+        const savedMoodHistory = JSON.parse(localStorage.getItem('moodHistory'));
+        const historySection = document.querySelector(".sidebar h2"); // Change this selector based on where you want to show the history
+        const historyList = document.getElementById("history-list");
+             historyList.innerHTML = '';
+        if (savedMoodHistory && savedMoodHistory.length > 0) {
+            savedMoodHistory.forEach((item , index)=> {
+               const listItem = document.createElement('li');
+               listItem.classList.add('history-item');
+        
+              if (index % 2 === 0) {
+                listItem.classList.add('even-comment');
+            } else {
+                listItem.classList.add('odd-comment');
+            }
+            let comment = item.comment ? item.comment : "No comment";
+            let truncatedComment = comment.length > 20 ? comment.substring(0, 20) + '...' : comment;
+            listItem.innerHTML = `
+                <strong>${index + 1}. ${item.mood} : ${item.date}</strong><br>
+                <span class="comment-preview">${truncatedComment}</span>
+                <span class="comment-full hidden">${item.comment}</span> <i class="fas fa-trash delete-icon"></i>
+            `;
+
+            // Add the click event to the trash icon
+            const deleteIcon = listItem.querySelector('.delete-icon');
+                deleteIcon.addEventListener('click', function (e) {
+                    // Prevent the click from propagating to the list item
+                    e.stopPropagation();
+
+                    // Confirm if the user wants to delete
+                    const isConfirmed = confirm("Are you sure you want to delete this entry?");
+                    if (isConfirmed) {
+                        // Remove the item from the moodHistory array
+                        savedMoodHistory.splice(index, 1);
+
+                         // Update localStorage
+                         localStorage.setItem('moodHistory', JSON.stringify(savedMoodHistory));
+
+                            // Re-render the history list
+                            displayMoodHistory();
+                            }
+                            });
+                listItem.addEventListener("click", function () {
+                const fullComment = listItem.querySelector(".comment-full");
+                const previewComment = listItem.querySelector(".comment-preview");
+                
+                fullComment.classList.toggle("hidden");
+                previewComment.classList.toggle("hidden");
+                
+            });
+            
+               historyList.appendChild(listItem);
+            });
+          
+        }
+    }
+
+    // Display saved history when page loads
+    displayMoodHistory();
+   });
+   </script>
+</body>
+</html>
