@@ -44,7 +44,13 @@
          <div class="mood-circle" data-mood="Excited">🤩 <span>Excited</span></div>
          <div class="mood-circle" data-mood="Other">🫨 <span>Other</span></div> 
      </div>
-     <textarea id="comment-box" class="hidden" placeholder="Write your thoughts..." rows="4" cols="30" style="display: none;"></textarea>
+     <div id="other-mood-options" class="hidden">
+        <div class="mood-circle" data-mood="Stressed">😟 <span>Stressed</span></div>
+        <div class="mood-circle" data-mood="Bored">😐 <span>Bored</span></div>
+        <div class="mood-circle" data-mood="Confused">😕 <span>Confused</span></div>
+        <div class="mood-circle" data-mood="Hopeful">😊 <span>Hopeful</span></div>
+    </div>
+     <textarea id="comment-box" class="hidden" placeholder="Write your thoughts..." rows="5" cols="60" style="display: none;"></textarea>
     <button id="save-mood" class="hidden" style="display: none;">Save Mood</button>
     </section>
    </div>
@@ -73,10 +79,47 @@
     // Get logged-in user
     const loggedInUser = localStorage.getItem("loggedInUser");
 
+    const otherMoodCircle = document.querySelector(".mood-circle[data-mood='Other']");
+    const otherMoodOptions = document.getElementById("other-mood-options");
+    
 
     let moodHistory = JSON.parse(localStorage.getItem('moodHistory')) || [];
 
    
+
+    otherMoodCircle.addEventListener("click", function () {
+        // Show additional mood options
+        otherMoodOptions.style.display = "grid"; 
+
+        // Hide the comment box 
+        commentBox.style.display = "none";
+        saveButton.style.display = "none";
+    });
+
+    
+    const additionalMoodOptions = document.querySelectorAll("#other-mood-options .mood-circle");
+    additionalMoodOptions.forEach(circle => {
+        circle.addEventListener("click", function () {
+            const selectedMood = circle.getAttribute("data-mood");
+            const emoji = circle.innerText.trim(); 
+
+            // Set the selected mood as the active one
+            moodCircles.forEach(el => el.classList.remove("active"));
+            circle.classList.add("active");
+
+            // Display the comment box and save button
+            commentBox.style.display = "block";
+            saveButton.style.display = "block";
+            commentBox.classList.add("active");
+
+            // Hide additional options again
+            otherMoodOptions.style.display = "none";
+
+            // Set the mood text in the comment box (optional)
+            commentBox.placeholder = `How do you feel when you're ${selectedMood.toLowerCase()}?`;
+        });
+    });
+
     
     if (loggedInUser) {
         // Update the welcome message with the actual username
